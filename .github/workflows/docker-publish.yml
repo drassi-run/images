@@ -12,8 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
       id-token: write
+      packages: write
+      attestations: write
     strategy:
       matrix:
         distro: [ubuntu]
@@ -43,8 +44,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Docker metadata
-        id: meta
         uses: docker/metadata-action@v5
+        id: meta
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
@@ -66,8 +67,8 @@ jobs:
           docker buildx inspect
 
       - name: Build and push Docker image
-        id: publish
         uses: docker/build-push-action@v6
+        id: publish
         with:
           pull: true
           push: true
@@ -82,3 +83,11 @@ jobs:
           platforms: |
             linux/amd64
             linux/arm64
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        id: attest
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.publish.outputs.digest }}
+          push-to-registry: true
