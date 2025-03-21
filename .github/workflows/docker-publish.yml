@@ -7,14 +7,15 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+  attestations: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-      attestations: write
     strategy:
       matrix:
         distro: [ubuntu]
@@ -85,7 +86,7 @@ jobs:
             linux/arm64
 
       - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v2
         id: attest
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
