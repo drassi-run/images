@@ -53,13 +53,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=22.04
+            type=raw,value=24.04
           labels: |
-            org.opencontainers.image.title=Ubuntu 22.04 Actions runner images
-            org.opencontainers.image.description=Ubuntu 22.04 docker image used of (GitHub) Actions runner
+            org.opencontainers.image.title=Ubuntu 24.04 Actions runner images
+            org.opencontainers.image.description=Ubuntu 24.04 docker image used of (GitHub) Actions runner
           annotations: |
-            org.opencontainers.image.title=Ubuntu 22.04 Actions runner images
-            org.opencontainers.image.description=Ubuntu 22.04 docker image used of (GitHub) Actions runner
+            org.opencontainers.image.title=Ubuntu 24.04 Actions runner images
+            org.opencontainers.image.description=Ubuntu 24.04 docker image used of (GitHub) Actions runner
 
       - name: Docker builder info
         run: |
