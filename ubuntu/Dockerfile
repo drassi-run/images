@@ -4,7 +4,7 @@ LABEL maintainer="dev@drassi.run"
 SHELL ["/bin/bash", "-c"]
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Install & configure git
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     curl -sSL "https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh" | bash; \
     apt-get update; \
@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # Install make/gcc used to compile C/C++ code in many projects
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends build-essential; \
@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # * https://docs.docker.com/engine/install/ubuntu/
 # * https://get.docker.com
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     source /etc/os-release; \
     curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" -o "/etc/apt/keyrings/docker.asc"; \
@@ -55,7 +55,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # Install Python, which used by:
 # * Python shell: https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_iddefaultsrunshell
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends python3; \
@@ -69,7 +69,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # * https://github.com/nodesource/distributions
 ARG NODE_VERSION="20.x"
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
     curl -fsSL "https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key" \
       | gpg --dearmor -o "/usr/share/keyrings/nodesource.gpg"; \
