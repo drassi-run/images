@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 LABEL maintainer="dev@drassi.run"
 SHELL ["/bin/bash", "-c"]
 
@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      sudo gnupg openssl openssh-client curl wget time \
+      sudo gnupg openssl openssh-client curl wget time tini \
       tzdata locales ca-certificates apt-transport-https \
       binutils dnsutils findutils tree jq \
       iproute2 iputils-ping telnet netcat-openbsd net-tools \
@@ -52,29 +52,5 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
       docker-ce containerd.io docker-ce-cli docker-compose-plugin docker-buildx-plugin; \
     docker -v
 
-# Install Python, which used by:
-# * Python shell: https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_iddefaultsrunshell
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends python3; \
-    ln -s python3 /usr/bin/python; \
-    python --version
-
-# Install Node.js, which used by:
-# * JavaScript action: https://docs.github.com/en/actions/sharing-automations/creating-actions/creating-a-javascript-action
-# Installation references:
-# * https://nodejs.org/en/download/package-manager/all
-# * https://github.com/nodesource/distributions
-ARG NODE_VERSION="20.x"
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
-    set -eux; \
-    curl -fsSL "https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key" \
-      | gpg --dearmor -o "/usr/share/keyrings/nodesource.gpg"; \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_VERSION nodistro main" \
-      > "/etc/apt/sources.list.d/nodesource.list"; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends nodejs; \
-    node -v
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/usr/bin/dockerd"]
