@@ -20,9 +20,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     set -eux; \
-    curl -sSL "https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh" | bash; \
     apt-get update; \
-    apt-get install -y --no-install-recommends git git-lfs; \
+    apt-get install -y --no-install-recommends git; \
     git --version; \
     git config --system --add safe.directory '*'
 
