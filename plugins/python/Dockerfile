@@ -10,6 +10,8 @@ ENV UV_PYTHON_INSTALL_DIR=/build
 ARG PYTHON_VERSION=3.12
 RUN uv python install "$PYTHON_VERSION"
 RUN mv ./cpython-$PYTHON_VERSION* ./python
+# remove marker
+RUN rm -rf "./python/lib/python${PYTHON_VERSION}/EXTERNALLY-MANAGED"
 
 FROM scratch
 COPY --from=builder /build/python /
