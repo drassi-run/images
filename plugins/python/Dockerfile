@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG UV_VERSION=0.9
+ARG UV_VERSION=0.12
 
 FROM astral/uv:$UV_VERSION-debian-slim AS builder
 WORKDIR /build
