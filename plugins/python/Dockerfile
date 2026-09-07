@@ -4,14 +4,18 @@ ARG UV_VERSION=0.12
 FROM astral/uv:$UV_VERSION-debian-slim AS builder
 WORKDIR /build
 SHELL ["/bin/bash", "-c"]
-ENV UV_PYTHON_INSTALL_DIR=/build
 
 # https://github.com/astral-sh/python-build-standalone
 ARG PYTHON_VERSION=3.12
+# > uv python dir
+ENV UV_PYTHON_INSTALL_DIR=/build
 RUN uv python install "$PYTHON_VERSION"
-RUN mv ./cpython-$PYTHON_VERSION* ./python
-# remove marker
-RUN rm -rf "./python/lib/python${PYTHON_VERSION}/EXTERNALLY-MANAGED"
+RUN set -eux; \
+    # remove all symlinks
+    find . -maxdepth 1 -type l -delete; \
+    mv ./cpython-$PYTHON_VERSION* ./python; \
+    # remove marker
+    rm -rf "./python/lib/python${PYTHON_VERSION}/EXTERNALLY-MANAGED";
 
 FROM scratch
 COPY --from=builder /build/python /
