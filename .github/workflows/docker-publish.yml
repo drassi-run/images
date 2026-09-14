@@ -19,10 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        distro: [ubuntu]
+        include:
+          - image: ubuntu
+            tag: "26.04"
+            title: Ubuntu 26.04 Actions runner images
+            description: Ubuntu 26.04 docker image used for (GitHub) Actions runner
+          - image: plugins/node
+            tag: "24"
+            title: Node.js 24 runtime
+            description: Node.js 24 runtime for (GitHub) Actions runner
+          - image: plugins/python
+            tag: "3.12"
+            title: Python 3.12 runtime
+            description: Python 3.12 runtime for (GitHub) Actions runner
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository_owner }}/${{ matrix.distro }}
+      IMAGE_NAME: ${{ github.repository_owner }}/${{ matrix.image }}
 
     steps:
       # Docker build using Git context, no need to use checkout action
@@ -53,13 +65,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=26.04
+            type=raw,value=${{ matrix.tag }}
           labels: |
-            org.opencontainers.image.title=Ubuntu 26.04 Actions runner images
-            org.opencontainers.image.description=Ubuntu 26.04 docker image used of (GitHub) Actions runner
+            org.opencontainers.image.title=${{ matrix.title }}
+            org.opencontainers.image.description=${{ matrix.description }}
           annotations: |
-            org.opencontainers.image.title=Ubuntu 26.04 Actions runner images
-            org.opencontainers.image.description=Ubuntu 26.04 docker image used of (GitHub) Actions runner
+            org.opencontainers.image.title=${{ matrix.title }}
+            org.opencontainers.image.description=${{ matrix.description }}
 
       - name: Docker builder info
         run: |
@@ -76,7 +88,7 @@ jobs:
           push: true
           sbom: true
           provenance: true
-          context: "{{defaultContext}}:${{ matrix.distro }}"
+          context: "{{defaultContext}}:${{ matrix.image }}"
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
